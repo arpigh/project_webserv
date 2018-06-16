@@ -11,9 +11,7 @@ import flask
 import gensim 
 import codecs
 import numpy
-import datetime 
-import urllib.request  
-import json
+import urllib.request 
 import matplotlib.pyplot as plt
 import re
 from pymorphy2 import MorphAnalyzer
