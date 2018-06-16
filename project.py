@@ -1,22 +1,6 @@
-
-# coding: utf-8
-
-# In[1]:
-
-
 ##Веб-сервис: обратиться через API VK к заданному набору сообществ, скачать записи за определённый период 
 ##и построить графики частотности ключевых для тематки сообщества слов (для сообществ, посвящённым фильмам, 
 ##"режиссёр", "кино", "премьера", "показ", "блокбастер", остальные найти через семантические вектора)
-
-
-# In[2]:
-
-
-##группы, из которых выгружается информация 
-
-
-# In[ ]:
-
 
 from flask import Flask, render_template
 import numpy
@@ -24,11 +8,6 @@ import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
 from flask import Flask, request, render_template
-
-
-# In[3]:
-
-
 import flask
 import gensim 
 import codecs
@@ -40,10 +19,6 @@ import matplotlib.pyplot as plt
 import re
 from pymorphy2 import MorphAnalyzer
 morph = MorphAnalyzer()
-
-
-# In[4]:
-
 
 def get_text(group_id): ##функция, выгружающся 200 текстов из заданной группы 
     req = urllib.request.Request('https://api.vk.com/method/wall.get?owner_id=-' + group_id + '&count=100&v=5.74&access_token=8423c2448423c2448423c244d08441f2a1884238423c244dee1644d9e90529494134bf8') 
@@ -63,10 +38,6 @@ def get_text(group_id): ##функция, выгружающся 200 текст�
             texts.append(data[i]['text'])
     return texts
 
-
-# In[5]:
-
-
 def prep(texts): ##предобработка тестов   
     prep_txts = []
     for txt in texts:
@@ -76,16 +47,7 @@ def prep(texts): ##предобработка тестов
         
     return prep_txts
 
-
-# In[6]:
-
-
 ch_r = ['NPRO','PRED','PREP','CONJ','PRCL','INTJ'] #части речи , которые не учитываются (служебные)
-
-
-# In[7]:
-
-
 def words_lst(texts): ##разбиение на слова в н.ф.
     words_l = []
     for txt in texts:
@@ -94,10 +56,6 @@ def words_lst(texts): ##разбиение на слова в н.ф.
             if lem.tag.POS not in ch_r: #если нет в списке ch_r берем 
                 words_l.append(lem.normal_form)
     return words_l
-
-
-# In[8]:
-
 
 def freq_dict(words): #составление словая частотности для слов
     d = {}
@@ -108,15 +66,7 @@ def freq_dict(words): #составление словая частотност�
             d[word] = 1      
     return d
 
-
-# In[9]:
-
-
 words_ = ["режиссёр_NOUN", "кино_NOUN", "премьера_NOUN", "показ_NOUN", "блокбастер_NOUN"]
-
-
-# In[10]:
-
 
 m = 'ruscorpora_upos_skipgram_300_5_2018.vec.gz' ##загружаем модель word2vec
 if m.endswith('.vec.gz'):
@@ -126,15 +76,7 @@ elif m.endswith('.bin.gz'):
 else:
     model = gensim.models.KeyedVectors.load(m)
 
-
-# In[11]:
-
-
 model.init_sims(replace=True)
-
-
-# In[12]:
-
 
 #первые 4 ближайшие по косинусовой схожести слов, берем в словарь 
 dop_words = []
@@ -146,22 +88,8 @@ for  word  in  words_:
             wrd = morph.parse(wrd)[0].normal_form
             dop_words.append(wrd)
 
-
-# In[13]:
-
-
 words_ = ["режиссёр", "кино", "премьера", "показ", "блокбастер"]
-
-
-# In[14]:
-
-
 words_  = dop_words + words_
-
-
-# In[15]:
-
-
 def for_bar_dict(fr_dict):#словарь для постоение столбчатой диаграммы
     graph_dict = {}
     for word in words_:    
@@ -171,16 +99,7 @@ def for_bar_dict(fr_dict):#словарь для постоение столбч
             graph_dict[word] = 0
     return  graph_dict
 
-
-# In[16]:
-
-
 empty_lab = ['' for wrd in words_]
-
-
-# In[19]:
-
-
 app = Flask(__name__)
 
 @app.route('/')
