@@ -2,7 +2,6 @@
 ##и построить графики частотности ключевых для тематки сообщества слов (для сообществ, посвящённым фильмам, 
 ##"режиссёр", "кино", "премьера", "показ", "блокбастер", остальные найти через семантические вектора)
 
-from flask import Flask, render_template
 import numpy
 import matplotlib.pyplot as plt
 from io import BytesIO
